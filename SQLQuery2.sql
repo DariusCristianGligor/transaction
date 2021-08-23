@@ -1,0 +1,58 @@
+--DEADLOCK
+--SESSION2
+BEGIN TRAN;
+ UPDATE ACCOUNT
+SET amount=120
+WHERE ID=2;
+
+
+UPDATE ACCOUNT
+SET amount=20022
+WHERE ID=1;
+COMMIT TRAN;
+-----------------------------
+--READ UNCOMMITTED DIRTYREAD
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+BEGIN TRAN;
+SELECT *FROM ACCOUNT
+SELECT *FROM ACCOUNT
+ROLLBACK
+----------------
+--READ COMMITTED THIS IS THE DEAFULT ISOLATION LEVEL
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+BEGIN TRAN;
+SELECT *FROM ACCOUNT
+SELECT *FROM ACCOUNT
+ROLLBACK
+
+-------------
+--NON-REPEATABLE READ
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+BEGIN TRAN;
+SELECT *FROM ACCOUNT;
+SELECT *FROM ACCOUNT;
+ROLLBACK
+
+----------------
+--repetable reads --Phantom Read
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+BEGIN TRAN;
+SELECT *FROM ACCOUNT;
+INSERT INTO ACCOUNT
+VALUES
+(12131190,11402,'asdasd');
+SELECT *FROM ACCOUNT;
+ROLLBACK
+----uncommited:
+----commited:
+--update/insert exclusive
+----serializable
+--select-shared
+--insert-exclusive
+--we can't insert after a select;
+--repetable reads --Phantom Read
+--select--shared
+--insert-- exclusive
+--update--exclusive
+--we can insert after a select, we cán't update
+
